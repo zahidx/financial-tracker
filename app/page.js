@@ -1,4 +1,8 @@
+"use client";
+
 import { CurrencyDollarIcon } from "@heroicons/react/24/solid"; // Ensure this matches your installed version
+import { Toaster } from "react-hot-toast"; // Import the Toaster component
+import "./globals.css";
 
 export default function Home() {
   return (
@@ -13,6 +17,9 @@ export default function Home() {
           Manage your money wisely and keep your finances in check.
         </p>
       </header>
+
+      {/* Render toast notifications */}
+      <Toaster position="top-right" reverseOrder={false} />
 
       <div className="flex space-x-4">
         <button className="bg-green-500 hover:bg-green-600 text-white py-2 px-6 rounded shadow-lg">
