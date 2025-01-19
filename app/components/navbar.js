@@ -1,13 +1,25 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMoon, faSun } from "@fortawesome/free-solid-svg-icons";
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false); // State for mobile menu visibility
   const [isDarkMode, setIsDarkMode] = useState(false); // State for dark mode toggle
+
+  // Ensure dark mode is applied immediately by adding it to the <html> element on initial load
+  useEffect(() => {
+    const savedMode = localStorage.getItem("darkMode");
+    if (savedMode === "true") {
+      setIsDarkMode(true);
+      document.documentElement.classList.add("dark");
+    } else {
+      setIsDarkMode(false);
+      document.documentElement.classList.remove("dark");
+    }
+  }, []);
 
   const toggleMenu = () => {
     setIsOpen(!isOpen); // Toggle mobile menu
@@ -17,8 +29,10 @@ export default function Navbar() {
     setIsDarkMode(!isDarkMode);
     if (!isDarkMode) {
       document.documentElement.classList.add("dark");
+      localStorage.setItem("darkMode", "true"); // Save dark mode preference in localStorage
     } else {
       document.documentElement.classList.remove("dark");
+      localStorage.setItem("darkMode", "false"); // Remove dark mode preference from localStorage
     }
   };
 

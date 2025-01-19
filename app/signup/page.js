@@ -7,12 +7,13 @@ import { doc, setDoc, getDoc } from "firebase/firestore";
 import toast, { Toaster } from "react-hot-toast";
 
 export default function Signup() {
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [phone, setPhone] = useState("");
   const [dob, setDob] = useState("");
-  const [username, setUsername] = useState("");
   const [gender, setGender] = useState("");
 
   // Handle user signup
@@ -25,20 +26,12 @@ export default function Signup() {
       return;
     }
 
-    // Check if the email or username already exists
+    // Check if the email already exists
     try {
-      // Check if email already exists
       const userDocRef = doc(db, "users", email);
       const userSnapshot = await getDoc(userDocRef);
       if (userSnapshot.exists()) {
         toast.error("This email is already in use. Please use a different one.");
-        return;
-      }
-
-      // Check if username already exists
-      const usernameQuery = await getDoc(doc(db, "usernames", username));
-      if (usernameQuery.exists()) {
-        toast.error("This username is already taken. Please choose another.");
         return;
       }
 
@@ -47,18 +40,16 @@ export default function Signup() {
       const user = userCredential.user;
 
       // Store additional user data in Firestore
-      const userDoc = doc(db, "users", user.email); // Use email as the document ID
+      const userDoc = doc(db, "users", user.email);
       await setDoc(userDoc, {
+        firstName: firstName,
+        lastName: lastName,
         email: user.email,
         phone: phone,
         dob: dob,
-        username: username,
         gender: gender,
         createdAt: new Date().toISOString(),
       });
-
-      // Store username as a separate collection for quick lookup
-      await setDoc(doc(db, "usernames", username), { email: user.email });
 
       toast.success("Registration successful!");
     } catch (error) {
@@ -68,68 +59,107 @@ export default function Signup() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-r from-blue-500 to-indigo-600 text-white flex items-center justify-center">
+<div className="min-h-screen bg-[#155E95] text-white flex items-center justify-center py-12 px-4 dark:bg-[#260C46] dark:text-white">
+
       <Toaster />
       <form
         onSubmit={handleSignup}
-        className="bg-gray-800 p-8 rounded shadow-lg w-full max-w-sm"
+        className="bg-gray-800 p-8 rounded-lg shadow-xl w-full max-w-lg dark:bg-gray-900"
       >
-        <h1 className="text-2xl font-bold mb-6 text-center">Sign Up</h1>
-        
+        <h1 className="text-3xl font-semibold mb-8 text-center">Create Your Account</h1>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-6">
+          <input
+            type="text"
+            placeholder="First Name"
+            value={firstName}
+            onChange={(e) => setFirstName(e.target.value)}
+            className="w-full p-3 rounded-md text-black dark:text-white dark:bg-gray-700 dark:border-gray-600 focus:ring-2 focus:ring-white"
+            required
+          />
+          <input
+            type="text"
+            placeholder="Last Name"
+            value={lastName}
+            onChange={(e) => setLastName(e.target.value)}
+            className="w-full p-3 rounded-md text-black dark:text-white dark:bg-gray-700 dark:border-gray-600 focus:ring-2 focus:ring-white"
+            required
+          />
+        </div>
+
         <input
           type="email"
-          placeholder="Email"
+          placeholder="Email Address"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          className="w-full p-2 mb-4 rounded text-black"
+          className="w-full p-3 mb-4 rounded-md text-black dark:text-white dark:bg-gray-700 dark:border-gray-600 focus:ring-2 focus:ring-white"
           required
         />
-        
-        <input
-          type="text"
-          placeholder="Username"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
-          className="w-full p-2 mb-4 rounded text-black"
-          required
-        />
-        
+
         <input
           type="text"
           placeholder="Phone Number"
           value={phone}
           onChange={(e) => setPhone(e.target.value)}
-          className="w-full p-2 mb-4 rounded text-black"
+          className="w-full p-3 mb-4 rounded-md text-black dark:text-white dark:bg-gray-700 dark:border-gray-600 focus:ring-2 focus:ring-white"
           required
         />
-        
+
         <input
           type="date"
           placeholder="Date of Birth"
           value={dob}
           onChange={(e) => setDob(e.target.value)}
-          className="w-full p-2 mb-4 rounded text-black"
+          className="w-full p-3 mb-4 rounded-md text-black dark:text-white dark:bg-gray-700 dark:border-gray-600 focus:ring-2 focus:ring-white"
           required
         />
-        
-        <select
-          value={gender}
-          onChange={(e) => setGender(e.target.value)}
-          className="w-full p-2 mb-4 rounded text-black"
-          required
-        >
-          <option value="">Select Gender</option>
-          <option value="Male">Male</option>
-          <option value="Female">Female</option>
-          <option value="Other">Other</option>
-        </select>
+
+        {/* Gender Radio Buttons without border */}
+        <div className="mb-6">
+          <p className="text-lg font-medium mb-2">Select Gender:</p>
+          <div className="flex gap-6 items-center">
+            <label className="flex items-center space-x-2 cursor-pointer">
+              <input
+                type="radio"
+                name="gender"
+                value="Male"
+                checked={gender === "Male"}
+                onChange={(e) => setGender(e.target.value)}
+                className="w-5 h-5 "
+              />
+              <span className="text-white">Male</span>
+            </label>
+            <label className="flex items-center space-x-2 cursor-pointer">
+              <input
+                type="radio"
+                name="gender"
+                value="Female"
+                checked={gender === "Female"}
+                onChange={(e) => setGender(e.target.value)}
+                className="w-5 h-5"
+              />
+              <span className="text-white">Female</span>
+            </label>
+            <label className="flex items-center space-x-2 cursor-pointer">
+              <input
+                type="radio"
+                name="gender"
+                value="Other"
+                checked={gender === "Other"}
+                onChange={(e) => setGender(e.target.value)}
+                className="w-5 h-5 "
+              />
+              <span className="text-white">Other</span>
+            </label>
+          </div>
+        </div>
 
         <input
           type="password"
           placeholder="Password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          className="w-full p-2 mb-4 rounded text-black"
+          className="w-full p-3 mb-4 rounded-md text-black dark:text-white dark:bg-gray-700 dark:border-gray-600 focus:ring-2 focus:ring-white"
           required
         />
 
@@ -138,13 +168,13 @@ export default function Signup() {
           placeholder="Confirm Password"
           value={confirmPassword}
           onChange={(e) => setConfirmPassword(e.target.value)}
-          className="w-full p-2 mb-6 rounded text-black"
+          className="w-full p-3 mb-6 rounded-md text-black dark:text-white dark:bg-gray-700 dark:border-gray-600 focus:ring-2 focus:ring-white"
           required
         />
-        
+
         <button
           type="submit"
-          className="bg-green-500 hover:bg-green-600 text-white py-2 px-6 rounded shadow-lg w-full"
+          className="bg-green-500 hover:bg-green-600 text-white py-3 px-6 rounded-lg shadow-md w-full dark:bg-green-600 dark:hover:bg-green-700"
         >
           Sign Up
         </button>

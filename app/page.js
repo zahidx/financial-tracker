@@ -2,6 +2,8 @@
 
 import { config } from "@fortawesome/fontawesome-svg-core";
 import "@fortawesome/fontawesome-svg-core/styles.css";
+import 'animate.css';
+
 import { CurrencyDollarIcon } from "@heroicons/react/24/solid"; // Ensure this matches your installed version
 import { Toaster } from "react-hot-toast"; // Import the Toaster component
 import "./globals.css";
